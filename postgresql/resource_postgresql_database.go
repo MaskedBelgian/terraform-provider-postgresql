@@ -25,6 +25,8 @@ const (
 	dbTablespaceAttr       = "tablespace_name"
 	dbTemplateAttr         = "template"
 	dbAlterObjectOwnership = "alter_object_ownership"
+	dbLocaleProviderAttr   = "locale_provider"
+	dbICULocaleAttr        = "icu_locale"
 )
 
 func resourcePostgreSQLDatabase() *schema.Resource {
@@ -77,6 +79,20 @@ func resourcePostgreSQLDatabase() *schema.Resource {
 				Computed:    true,
 				ForceNew:    true,
 				Description: "Character classification (LC_CTYPE) to use in the new database",
+			},
+			dbLocaleProviderAttr: {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				Description: "Library to define the locale behaviour for collations and character classification to use in the new database",
+			},
+			dbICULocaleAttr: {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Computed:    true,
+				ForceNew:    true,
+				Description: "Name of the ICU locale to use in the new database",
 			},
 			dbTablespaceAttr: {
 				Type:        schema.TypeString,
@@ -204,6 +220,15 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 		fmt.Fprintf(b, " LC_CTYPE '%s' ", pqQuoteLiteral(v.(string)))
 	}
 
+	// Don't specify LOCALE PROVIDER if user didn't specify it
+	// This will use the default one (usually the one defined in the template database)
+	switch v, ok := d.GetOk(dbLocaleProviderAttr); {
+	case ok && strings.ToUpper(v.(string)) == "DEFAULT":
+		fmt.Fprintf(b, " LOCALE_PROVIDER DEFAULT")
+	case ok:
+		fmt.Fprintf(b, " LOCALE_PROVIDER '%s' ", pqQuoteLiteral(v.(string)))
+	}
+
 	switch v, ok := d.GetOk(dbTablespaceAttr); {
 	case ok && strings.ToUpper(v.(string)) == "DEFAULT":
 		fmt.Fprint(b, " TABLESPACE DEFAULT")
@@ -224,6 +249,11 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	if db.featureSupported(featureDBIsTemplate) {
 		val := d.Get(dbIsTemplateAttr).(bool)
 		fmt.Fprint(b, " IS_TEMPLATE ", val)
+	}
+
+	if db.featureSupported(featureLocaleICU) {
+		val := d.Get(dbICULocaleAttr).(string)
+		fmt.Fprint(b, " ICU_LOCALE ", val)
 	}
 
 	sql := b.String()

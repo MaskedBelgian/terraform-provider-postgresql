@@ -44,6 +44,7 @@ const (
 	featurePubWithoutTruncate
 	featureFunction
 	featureServer
+	featureLocaleICU
 )
 
 var (
@@ -115,6 +116,9 @@ var (
 		featureServer: semver.MustParseRange(">=10.0.0"),
 
 		featureDatabaseOwnerRole: semver.MustParseRange(">=15.0.0"),
+
+		// ICU collations are supported in Postgres 15 and above
+		featureLocaleICU: semver.MustParseRange(">=15.0.0"),
 	}
 )
 

@@ -226,7 +226,7 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	case ok && strings.ToUpper(v.(string)) == "DEFAULT":
 		fmt.Fprintf(b, " LOCALE_PROVIDER DEFAULT")
 	case ok:
-		fmt.Fprintf(b, " LOCALE_PROVIDER %s ", pqQuoteIdentifier(v.(string)))
+		fmt.Fprintf(b, " LOCALE_PROVIDER %s ", pqQuoteLiteral(v.(string)))
 	case v.(string) == "":
 		fmt.Fprintf(b, " LOCALE_PROVIDER libc")
 	}

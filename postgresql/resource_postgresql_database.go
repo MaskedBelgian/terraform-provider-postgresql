@@ -229,6 +229,15 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 		fmt.Fprintf(b, " LOCALE_PROVIDER '%s' ", pqQuoteLiteral(v.(string)))
 	}
 
+	// Don't specify ICU_LOCALE if user didn't specify it
+	// This will use the default one (usually the one defined in the template database)
+	switch v, ok := d.GetOk(dbICULocaleAttr); {
+	case ok && strings.ToUpper(v.(string)) == "DEFAULT":
+		fmt.Fprintf(b, " ICU_LOCALE DEFAULT")
+	case ok:
+		fmt.Fprintf(b, " ICU_LOCALE '%s' ", pqQuoteLiteral(v.(string)))
+	}
+
 	switch v, ok := d.GetOk(dbTablespaceAttr); {
 	case ok && strings.ToUpper(v.(string)) == "DEFAULT":
 		fmt.Fprint(b, " TABLESPACE DEFAULT")
@@ -249,11 +258,6 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	if db.featureSupported(featureDBIsTemplate) {
 		val := d.Get(dbIsTemplateAttr).(bool)
 		fmt.Fprint(b, " IS_TEMPLATE ", val)
-	}
-
-	if db.featureSupported(featureLocaleICU) {
-		val := d.Get(dbICULocaleAttr).(string)
-		fmt.Fprint(b, " ICU_LOCALE ", val)
 	}
 
 	sql := b.String()

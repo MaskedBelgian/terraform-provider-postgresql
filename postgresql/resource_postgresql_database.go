@@ -263,6 +263,7 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	}
 
 	sql := b.String()
+	fmt.Println(sql)
 	if _, err := db.Exec(sql); err != nil {
 		return fmt.Errorf("Error creating database %q: %w", dbName, err)
 	}

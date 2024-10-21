@@ -171,6 +171,12 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 
 	dbName := d.Get(dbNameAttr).(string)
 	b := bytes.NewBufferString("CREATE DATABASE ")
+	fmt.Println("#######################################################")
+	fmt.Println("#######################################################")
+	fmt.Println("#######################################################")
+	fmt.Println("#######################################################")
+	fmt.Println("#######################################################")
+	fmt.Println("#######################################################")
 	fmt.Fprint(b, pq.QuoteIdentifier(dbName))
 
 	// Handle each option individually and stream results into the query
@@ -263,6 +269,7 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	}
 
 	sql := b.String()
+	log.Println(sql)
 	if _, err := db.Exec(sql); err != nil {
 		return fmt.Errorf("Error %v", sql)
 		//return fmt.Errorf("Error creating database %q: %w %v", dbName, err, sql)

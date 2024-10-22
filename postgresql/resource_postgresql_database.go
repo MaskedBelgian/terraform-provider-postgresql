@@ -265,6 +265,21 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 
 	sql := b.String()
 	hclog.Default().Info(sql)
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
+	hclog.Default().Info("###############################################")
 	if _, err := db.Exec(sql); err != nil {
 		return fmt.Errorf("Error creating database %q: %w %v", dbName, err, sql)
 	}

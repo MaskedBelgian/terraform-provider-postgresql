@@ -8,6 +8,7 @@ import (
 	"log"
 	"strings"
 
+	"github.com/hashicorp/go-hclog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/lib/pq"
@@ -171,12 +172,6 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 
 	dbName := d.Get(dbNameAttr).(string)
 	b := bytes.NewBufferString("CREATE DATABASE ")
-	fmt.Println("#######################################################")
-	fmt.Println("#######################################################")
-	fmt.Println("#######################################################")
-	fmt.Println("#######################################################")
-	fmt.Println("#######################################################")
-	fmt.Println("#######################################################")
 	fmt.Fprint(b, pq.QuoteIdentifier(dbName))
 
 	// Handle each option individually and stream results into the query
@@ -269,10 +264,9 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	}
 
 	sql := b.String()
-	log.Println(sql)
+	hclog.Default().Info(sql)
 	if _, err := db.Exec(sql); err != nil {
-		return fmt.Errorf("Error %v", sql)
-		//return fmt.Errorf("Error creating database %q: %w %v", dbName, err, sql)
+		return fmt.Errorf("Error creating database %q: %w %v", dbName, err, sql)
 	}
 
 	// Set err outside of the return so that the deferred revoke can override err

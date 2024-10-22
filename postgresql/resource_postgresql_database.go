@@ -264,7 +264,7 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 
 	sql := b.String()
 	if _, err := db.Exec(sql); err != nil {
-		return fmt.Errorf("Error creating database %q: %w %v", dbName, err, sql)
+		return fmt.Errorf("Error creating database %q: %w %v", dbName, err)
 	}
 
 	// Set err outside of the return so that the deferred revoke can override err

@@ -144,6 +144,10 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	currentUser := db.client.config.getDatabaseUsername()
 	owner := d.Get(dbOwnerAttr).(string)
 
+	appLogger := hclog.New(&hclog.LoggerOptions{
+		Name:  "resourcePostgreSQLDatabaseCreate",
+		Level: hclog.LevelFomStrig("INFO"),
+	})
 	var err error
 	if owner != "" {
 		// Take a lock on db currentUser to avoid multiple database creation at the same time
@@ -264,23 +268,24 @@ func createDatabase(db *DBConnection, d *schema.ResourceData) error {
 	}
 
 	sql := b.String()
-	hclog.Default().Info(sql)
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
-	hclog.Default().Info("###############################################")
+	appLogger.Info(sql)
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
+	appLogger.Info("###############################################")
 	if _, err := db.Exec(sql); err != nil {
+		hclog.Default().Error("###############################################")
 		return fmt.Errorf("Error creating database %q: %w %v", dbName, err, sql)
 	}
 
